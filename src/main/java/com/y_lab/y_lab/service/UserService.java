@@ -5,7 +5,6 @@ import com.y_lab.y_lab.entity.enums.ActionType;
 import com.y_lab.y_lab.exception.AuthorizationFailedForTheRole;
 import com.y_lab.y_lab.exception.InvalidUsernameOrPassword;
 import com.y_lab.y_lab.exception.UserIsAlreadyRegistered;
-import com.y_lab.y_lab.repository.user.ram.RamUserRepository;
 import com.y_lab.y_lab.repository.user.UserRepository;
 import com.y_lab.y_lab.security.UserContext;
 import com.y_lab.y_lab.entity.UserInfo;

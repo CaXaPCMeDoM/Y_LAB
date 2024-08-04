@@ -2,14 +2,11 @@ package com.y_lab.y_lab.service;
 
 import com.y_lab.y_lab.entity.User;
 import com.y_lab.y_lab.repository.user.UserRepository;
-import com.y_lab.y_lab.repository.user.ram.RamUserRepository;
 import com.y_lab.y_lab.service.user.decorator.filter.UserFilter;
 import com.y_lab.y_lab.service.user.decorator.sort.UserSorter;
 import lombok.Setter;
 
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class UserProfileService {
     private final UserRepository userRepository;

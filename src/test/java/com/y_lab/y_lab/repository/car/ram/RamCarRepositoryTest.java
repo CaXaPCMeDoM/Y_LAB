@@ -1,16 +1,11 @@
 package com.y_lab.y_lab.repository.car.ram;
 
 import com.y_lab.y_lab.entity.Car;
-import com.y_lab.y_lab.entity.User;
 import com.y_lab.y_lab.entity.enums.CarState;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -61,7 +56,6 @@ class RamCarRepositoryTest {
     @Test
     void deleteCarNotFound() {
         Car car = new Car(null, "Marusya", "B1", 2009, 10000000, CarState.NEW);
-        Long idActual = carRepository.add(car);
 
         Car carActual = carRepository.delete(car.getCarId() + 1L);
 

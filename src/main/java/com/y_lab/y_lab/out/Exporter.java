@@ -6,5 +6,5 @@ import java.io.IOException;
 import java.util.List;
 
 public interface Exporter {
-    public void export(List<AuditEntity> entities) throws IOException;
+    void export(List<AuditEntity> entities) throws IOException;
 }

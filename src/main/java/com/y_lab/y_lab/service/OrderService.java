@@ -5,7 +5,6 @@ import com.y_lab.y_lab.entity.enums.ActionType;
 import com.y_lab.y_lab.entity.enums.OrderStatus;
 import com.y_lab.y_lab.exception.OrderForTheCarAlreadyExists;
 import com.y_lab.y_lab.repository.order.OrderRepository;
-import com.y_lab.y_lab.repository.order.ram.RamOrderRepository;
 import com.y_lab.y_lab.security.UserContext;
 import com.y_lab.y_lab.service.logger.AuditService;
 

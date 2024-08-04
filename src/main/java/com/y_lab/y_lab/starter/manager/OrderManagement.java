@@ -70,7 +70,7 @@ public class OrderManagement {
         Long customerId = input.readLong();
 
         try {
-            Order order = orderService.createOrder(carId, customerId);
+            orderService.createOrder(carId, customerId);
             printer.print("Order created successfully.");
         } catch (OrderForTheCarAlreadyExists e) {
             printer.print("Order for the car already exists.");

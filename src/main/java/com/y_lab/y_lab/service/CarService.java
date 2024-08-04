@@ -4,7 +4,6 @@ import com.y_lab.y_lab.entity.Car;
 import com.y_lab.y_lab.entity.enums.ActionType;
 import com.y_lab.y_lab.exception.CarNotFound;
 import com.y_lab.y_lab.repository.car.CarRepository;
-import com.y_lab.y_lab.repository.car.ram.RamCarRepository;
 import com.y_lab.y_lab.security.UserContext;
 import com.y_lab.y_lab.service.logger.AuditService;
 

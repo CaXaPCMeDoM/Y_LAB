@@ -63,7 +63,6 @@ class RamOrderRepositoryTest {
     @Test
     public void testGetFirst() {
         Order order1 = orderRepository.createOrder(1L, 1L);
-        Order order2 = orderRepository.createOrder(2L, 2L);
         assertEquals(order1, orderRepository.getFirst());
     }
 

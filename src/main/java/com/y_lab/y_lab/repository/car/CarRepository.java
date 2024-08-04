@@ -3,7 +3,6 @@ package com.y_lab.y_lab.repository.car;
 import com.y_lab.y_lab.entity.Car;
 
 import java.util.List;
-import java.util.Map;
 
 public interface CarRepository {
     Long add(Car car);

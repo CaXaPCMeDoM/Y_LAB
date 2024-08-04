@@ -1,7 +1,6 @@
 package com.y_lab.y_lab.service.logger;
 
 import com.y_lab.y_lab.entity.AuditEntity;
-import com.y_lab.y_lab.entity.User;
 import com.y_lab.y_lab.entity.enums.ActionType;
 import com.y_lab.y_lab.out.Exporter;
 import com.y_lab.y_lab.service.logger.filter.Filter;

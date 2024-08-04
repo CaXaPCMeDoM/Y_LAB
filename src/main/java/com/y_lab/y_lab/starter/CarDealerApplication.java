@@ -1,9 +1,7 @@
 package com.y_lab.y_lab.starter;
 
 import com.y_lab.y_lab.in.Input;
-import com.y_lab.y_lab.in.console.ConsoleInput;
 import com.y_lab.y_lab.out.Printer;
-import com.y_lab.y_lab.out.console.PrintToConsole;
 import com.y_lab.y_lab.service.CarService;
 import com.y_lab.y_lab.service.OrderService;
 import com.y_lab.y_lab.service.UserService;

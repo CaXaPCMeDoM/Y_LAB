@@ -49,7 +49,7 @@ public class UserManagement {
         String password = input.readLine();
 
         try {
-            User user = userService.authorization(username, password);
+            userService.authorization(username, password);
             printer.print("User logged in successfully.");
         } catch (InvalidUsernameOrPassword e) {
             printer.print("Invalid username or password.");
