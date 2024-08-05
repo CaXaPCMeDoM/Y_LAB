@@ -24,7 +24,7 @@ public class CarService {
 
             auditService.log(UserContext.getCurrentUser().getUserId(), ActionType.ADD_CAR);
         } catch (Exception ex) {
-            // TODO (log INFO)
+            // TODO (log.INFO)
         }
     }
 

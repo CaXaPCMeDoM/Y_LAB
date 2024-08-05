@@ -10,27 +10,42 @@ import com.y_lab.y_lab.service.OrderService;
 import java.sql.Timestamp;
 import java.util.List;
 
+/**
+ * Класс OrderManagement предоставляет функциональность для управления заказами,
+ * включая создание, поиск, изменение статуса, отмену и просмотр заказов по различным критериям.
+ */
 public class OrderManagement {
     private final OrderService orderService;
     private final Printer printer;
     private final Input input;
 
+    /**
+     * Создает новый экземпляр OrderManagement с указанными сервисами и утилитами.
+     *
+     * @param orderService сервис для управления заказами
+     * @param printer сервис для вывода сообщений пользователю
+     * @param input сервис для чтения ввода пользователя
+     */
     public OrderManagement(OrderService orderService, Printer printer, Input input) {
         this.orderService = orderService;
         this.printer = printer;
         this.input = input;
     }
 
+    /**
+     * Обрабатывает заказы, предоставляя пользователю меню с различными действиями,
+     * такими как создание, поиск, изменение статуса, отмена и просмотр заказов.
+     */
     public void processOrders() {
-        printer.print("Order Processing Menu:");
-        printer.print("1. Create Order");
-        printer.print("2. Search Order");
-        printer.print("3. Change Order Status");
-        printer.print("4. Cancel Order");
-        printer.print("5. View Orders by Date");
-        printer.print("6. View Orders by Customer");
-        printer.print("7. View Orders by Status");
-        printer.print("8. View Orders by Car");
+        printer.print("Меню обработки заказов:");
+        printer.print("1. Создать заказ");
+        printer.print("2. Найти заказ");
+        printer.print("3. Изменить статус заказа");
+        printer.print("4. Отменить заказ");
+        printer.print("5. Просмотреть заказы по дате");
+        printer.print("6. Просмотреть заказы по клиенту");
+        printer.print("7. Просмотреть заказы по статусу");
+        printer.print("8. Просмотреть заказы по автомобилю");
         int choice = input.readInt();
 
         switch (choice) {
@@ -59,55 +74,75 @@ public class OrderManagement {
                 viewOrdersByCar();
                 break;
             default:
-                printer.print("Invalid choice. Please try again.");
+                printer.print("Неверный выбор. Пожалуйста, попробуйте снова.");
         }
     }
 
+    /**
+     * Создает новый заказ, запрашивая у пользователя идентификаторы автомобиля и клиента.
+     * Выводит соответствующее сообщение в случае успешного создания или ошибки.
+     */
     private void createOrder() {
-        printer.print("Enter car ID:");
+        printer.print("Введите идентификатор автомобиля:");
         Long carId = input.readLong();
-        printer.print("Enter customer ID:");
+        printer.print("Введите идентификатор клиента:");
         Long customerId = input.readLong();
 
         try {
             orderService.createOrder(carId, customerId);
-            printer.print("Order created successfully.");
+            printer.print("Заказ успешно создан.");
         } catch (OrderForTheCarAlreadyExists e) {
-            printer.print("Order for the car already exists.");
+            printer.print("Заказ на данный автомобиль уже существует.");
         }
     }
 
+    /**
+     * Ищет заказ по его идентификатору и выводит его информацию.
+     * Выводит сообщение, если заказ не найден.
+     */
     private void searchOrder() {
-        printer.print("Enter order ID:");
+        printer.print("Введите идентификатор заказа:");
         Long orderId = input.readLong();
         Order order = orderService.searchOrderById(orderId);
         if (order != null) {
             printer.print(order.toString());
         } else {
-            printer.print("Order not found.");
+            printer.print("Заказ не найден.");
         }
     }
 
+    /**
+     * Изменяет статус заказа, запрашивая у пользователя идентификатор заказа и новый статус.
+     * Выводит сообщение о результате операции.
+     */
     private void changeOrderStatus() {
-        printer.print("Enter order ID:");
+        printer.print("Введите идентификатор заказа:");
         Long orderId = input.readLong();
-        printer.print("Enter new order status (NEW, IN_PROGRESS, COMPLETED, CANCELLED):");
+        printer.print("Введите новый статус заказа (NEW, IN_PROGRESS, COMPLETED, CANCELLED):");
         String status = input.readLine();
         orderService.changeStatus(orderId, OrderStatus.valueOf(status.toUpperCase()));
-        printer.print("Order status changed successfully.");
+        printer.print("Статус заказа успешно изменен.");
     }
 
+    /**
+     * Отменяет заказ, запрашивая у пользователя его идентификатор.
+     * Выводит сообщение о результате операции.
+     */
     private void cancelOrder() {
-        printer.print("Enter order ID:");
+        printer.print("Введите идентификатор заказа:");
         Long orderId = input.readLong();
         orderService.canceledOrder(orderId);
-        printer.print("Order cancelled successfully.");
+        printer.print("Заказ успешно отменен.");
     }
 
+    /**
+     * Отображает заказы в указанном диапазоне дат.
+     * Запрашивает у пользователя начальную и конечную даты.
+     */
     private void viewOrdersByDate() {
-        printer.print("Enter start date (yyyy-mm-dd hh:mm:ss):");
+        printer.print("Введите начальную дату (yyyy-mm-dd hh:mm:ss):");
         String startDate = input.readLine();
-        printer.print("Enter end date (yyyy-mm-dd hh:mm:ss):");
+        printer.print("Введите конечную дату (yyyy-mm-dd hh:mm:ss):");
         String endDate = input.readLine();
         List<Order> orders = orderService.findOrdersByDate(Timestamp.valueOf(startDate), Timestamp.valueOf(endDate));
         for (Order order : orders) {
@@ -115,8 +150,12 @@ public class OrderManagement {
         }
     }
 
+    /**
+     * Отображает заказы, выполненные указанным клиентом.
+     * Запрашивает у пользователя идентификатор клиента.
+     */
     private void viewOrdersByCustomer() {
-        printer.print("Enter customer ID:");
+        printer.print("Введите идентификатор клиента:");
         Long customerId = input.readLong();
         List<Order> orders = orderService.findOrdersByCustomer(customerId);
         for (Order order : orders) {
@@ -124,8 +163,12 @@ public class OrderManagement {
         }
     }
 
+    /**
+     * Отображает заказы с указанным статусом.
+     * Запрашивает у пользователя статус заказа.
+     */
     private void viewOrdersByStatus() {
-        printer.print("Enter order status (NEW, IN_PROGRESS, COMPLETED, CANCELLED):");
+        printer.print("Введите статус заказа (NEW, IN_PROGRESS, COMPLETED, CANCELLED):");
         String status = input.readLine();
         List<Order> orders = orderService.findOrdersByStatus(OrderStatus.valueOf(status.toUpperCase()));
         for (Order order : orders) {
@@ -133,8 +176,12 @@ public class OrderManagement {
         }
     }
 
+    /**
+     * Отображает заказы на указанный автомобиль.
+     * Запрашивает у пользователя идентификатор автомобиля.
+     */
     private void viewOrdersByCar() {
-        printer.print("Enter car ID:");
+        printer.print("Введите идентификатор автомобиля:");
         Long carId = input.readLong();
         List<Order> orders = orderService.findOrdersByCar(carId);
         for (Order order : orders) {
@@ -142,3 +189,4 @@ public class OrderManagement {
         }
     }
 }
+
