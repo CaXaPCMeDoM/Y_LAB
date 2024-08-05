@@ -9,17 +9,30 @@ import com.y_lab.y_lab.service.CarService;
 
 import java.util.List;
 
+/**
+ * Класс CarManagement предоставляет функциональность для управления автомобилями.
+ */
 public class CarManagement {
     private final CarService carService;
     private final Printer printer;
     private final Input input;
 
+    /**
+     * Создает новый экземпляр CarManagement с указанными сервисом автомобилей, утилитой вывода и утилитой ввода.
+     *
+     * @param carService сервис для работы с автомобилями
+     * @param printer утилита для вывода сообщений пользователю
+     * @param input утилита для получения ввода от пользователя
+     */
     public CarManagement(CarService carService, Printer printer, Input input) {
         this.carService = carService;
         this.printer = printer;
         this.input = input;
     }
 
+    /**
+     * Отображает меню управления автомобилями и обрабатывает выбор пользователя.
+     */
     public void manageCars() {
         printer.print("Car Management Menu:");
         printer.print("1. Add Car");
@@ -46,6 +59,9 @@ public class CarManagement {
         }
     }
 
+    /**
+     * Добавляет новый автомобиль на основании данных, введенных пользователем.
+     */
     private void addCar() {
         printer.print("Enter brand:");
         String brand = input.readLine();
@@ -71,6 +87,9 @@ public class CarManagement {
         printer.print("Car added successfully.");
     }
 
+    /**
+     * Редактирует существующий автомобиль на основании данных, введенных пользователем.
+     */
     private void editCar() {
         printer.print("Enter car ID to edit:");
         Long carId = input.readLong();
@@ -102,7 +121,9 @@ public class CarManagement {
         }
     }
 
-
+    /**
+     * Удаляет существующий автомобиль на основании идентификатора, введенного пользователем.
+     */
     private void removeCar() {
         printer.print("Enter car ID to remove:");
         Long carId = input.readLong();
@@ -114,6 +135,9 @@ public class CarManagement {
         }
     }
 
+    /**
+     * Отображает все автомобили.
+     */
     private void viewAllCars() {
         List<Car> cars = carService.getAllCars();
         for (Car car : cars) {
