@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.21.xsd">
+
+    <changeSet id="create-table-user" author="caxap">
+        <sql>CREATE TABLE entity_schema.user
+             (
+                 user_id  BIGINT DEFAULT nextval('entity_schema.user_id_seq') PRIMARY KEY,
+                 username VARCHAR(255) NOT NULL,
+                 password VARCHAR(255) NOT NULL,
+                 role     VARCHAR(10)  NOT NULL CHECK (role IN ('ADMIN', 'MANAGER', 'USER'))
+             );
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
