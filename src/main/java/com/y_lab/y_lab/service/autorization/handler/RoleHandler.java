@@ -1,0 +1,18 @@
+package com.y_lab.y_lab.service.autorization.handler;
+
+import com.y_lab.y_lab.entity.enums.Role;
+
+public abstract class RoleHandler {
+    protected RoleHandler roleHandler;
+
+    public RoleHandler setNextHandler(RoleHandler roleHandler) {
+        if (roleHandler == null) {
+            this.roleHandler = roleHandler;
+        } else {
+            roleHandler.setNextHandler(roleHandler);
+        }
+        return this;
+    }
+
+    public abstract boolean handlerRole(Role role);
+}
