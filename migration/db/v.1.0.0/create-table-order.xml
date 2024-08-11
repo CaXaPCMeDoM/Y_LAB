@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.21.xsd">
+
+    <changeSet id="create-table-order" author="caxap">
+        <sql>CREATE TABLE entity_schema.order
+             (
+                 id         BIGINT DEFAULT nextval('entity_schema.order_id_seq') PRIMARY key,
+                 car_id     BIGINT      NOT NULL,
+                 user_id    BIGINT      NOT NULL,
+                 status     VARCHAR(20) NOT NULL CHECK (status IN ('CREATED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED')),
+                 order_date TIMESTAMP   NOT NULL,
+                 FOREIGN KEY (car_id) REFERENCES entity_schema.car (car_id),
+                 FOREIGN KEY (user_id) REFERENCES entity_schema.user (user_id)
+             )
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
