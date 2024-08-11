@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Deprecated
 public class RamCarRepository implements CarRepository {
     private static List<Car> carList = new ArrayList<>();
     private static Long idCounter = 1L; // TODO (может быть переполнение)
