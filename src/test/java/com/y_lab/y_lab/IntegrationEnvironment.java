@@ -1,6 +1,5 @@
 package com.y_lab.y_lab;
 
-import com.y_lab.y_lab.repository.car.JdbcCarRepository;
 import liquibase.Contexts;
 import liquibase.LabelExpression;
 import liquibase.Liquibase;
@@ -33,13 +32,13 @@ public class IntegrationEnvironment {
                 .withPassword("1234");
         postgresContainer.start();
 
-        runMigration(postgresContainer);
+        runMigration();
     }
 
-    private static void runMigration(PostgreSQLContainer<?> postgres) {
-        String url = postgres.getJdbcUrl();
-        String password = postgres.getPassword();
-        String username = postgres.getUsername();
+    private static void runMigration() {
+        String url = IntegrationEnvironment.postgresContainer.getJdbcUrl();
+        String password = IntegrationEnvironment.postgresContainer.getPassword();
+        String username = IntegrationEnvironment.postgresContainer.getUsername();
 
         try {
             connection = DriverManager.getConnection(

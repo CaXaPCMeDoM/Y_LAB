@@ -3,24 +3,9 @@ package com.y_lab.y_lab.repository.car;
 import com.y_lab.y_lab.IntegrationEnvironment;
 import com.y_lab.y_lab.entity.Car;
 import com.y_lab.y_lab.entity.enums.CarState;
-import liquibase.Contexts;
-import liquibase.LabelExpression;
-import liquibase.Liquibase;
-import liquibase.exception.LiquibaseException;
-import liquibase.resource.DirectoryResourceAccessor;
-import liquibase.database.Database;
-import liquibase.database.DatabaseFactory;
-import liquibase.database.jvm.JdbcConnection;
 import org.junit.jupiter.api.*;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.nio.file.Path;
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -31,7 +16,7 @@ public class JdbcCarRepositoryTest extends IntegrationEnvironment {
     private static JdbcCarRepository carRepository;
 
     @BeforeAll
-    public static void setUp() throws Exception {
+    public static void setUp() {
         carRepository = new JdbcCarRepository(connection);
     }
 
