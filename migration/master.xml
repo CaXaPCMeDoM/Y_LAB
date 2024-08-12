@@ -14,4 +14,5 @@
     <include file="db/v.1.0.0/create-table-user.xml" relativeToChangelogFile="true"/>
     <include file="db/v.1.0.0/create-table-order.xml" relativeToChangelogFile="true"/>
     <include file="db/v.1.0.0/insert-data.xml" relativeToChangelogFile="true"/>
+    <include file="db/v.1.0.0/moving-service-tables-to-a-new-schema.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>
