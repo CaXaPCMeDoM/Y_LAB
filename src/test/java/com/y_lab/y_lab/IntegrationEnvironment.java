@@ -8,8 +8,10 @@ import liquibase.database.DatabaseFactory;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.LiquibaseException;
 import liquibase.resource.DirectoryResourceAccessor;
+import org.junit.jupiter.api.BeforeAll;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -18,14 +20,26 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+@Testcontainers
 public class IntegrationEnvironment {
 
     @Container
-    protected static final PostgreSQLContainer<?> postgresContainer;
+    protected static PostgreSQLContainer<?> postgresContainer;
 
     protected static Connection connection;
 
     static {
+        postgresContainer = new PostgreSQLContainer<>("postgres:16")
+                .withDatabaseName("db")
+                .withUsername("caxap")
+                .withPassword("1234");
+        postgresContainer.start();
+
+        runMigration();
+    }
+
+    @BeforeAll
+    static void setUp(){
         postgresContainer = new PostgreSQLContainer<>("postgres:16")
                 .withDatabaseName("db")
                 .withUsername("caxap")
@@ -46,7 +60,6 @@ public class IntegrationEnvironment {
                     username,
                     password
             );
-
             Path path = new File(".")
                     .toPath()
                     .toAbsolutePath()

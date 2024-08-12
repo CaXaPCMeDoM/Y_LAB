@@ -4,26 +4,13 @@ import com.y_lab.y_lab.IntegrationEnvironment;
 import com.y_lab.y_lab.entity.Car;
 import com.y_lab.y_lab.entity.enums.CarState;
 import org.junit.jupiter.api.*;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@Testcontainers
 public class JdbcCarRepositoryTest extends IntegrationEnvironment {
-    private static JdbcCarRepository carRepository;
-
-    @BeforeAll
-    public static void setUp() {
-        carRepository = new JdbcCarRepository(connection);
-    }
-
-    @AfterAll
-    public static void tearDown() throws SQLException {
-        connection.close();
-    }
+    private static final JdbcCarRepository carRepository = new JdbcCarRepository(IntegrationEnvironment.connection);
 
     @Test
     public void addCar() {

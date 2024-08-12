@@ -3,28 +3,15 @@ package com.y_lab.y_lab.repository.user;
 import com.y_lab.y_lab.IntegrationEnvironment;
 import com.y_lab.y_lab.entity.User;
 import com.y_lab.y_lab.entity.enums.Role;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class JdbcUserRepositoryTest extends IntegrationEnvironment {
 
-    private static JdbcUserRepository userRepository;
-
-    @BeforeAll
-    public static void setUp() {
-        userRepository = new JdbcUserRepository(connection);
-    }
-
-    @AfterAll
-    public static void tearDown() throws SQLException {
-        connection.close();
-    }
+    private static final JdbcUserRepository userRepository = new JdbcUserRepository((IntegrationEnvironment.connection));
 
     @Test
     public void testAddUser() {
