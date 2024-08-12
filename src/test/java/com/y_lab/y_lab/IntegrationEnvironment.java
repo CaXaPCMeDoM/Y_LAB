@@ -19,10 +19,11 @@ import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 @Testcontainers
 public class IntegrationEnvironment {
-
+    private static final String SCHEMA_CHANGE_LOG = "service";
     @Container
     protected static PostgreSQLContainer<?> postgresContainer;
 
@@ -55,11 +56,13 @@ public class IntegrationEnvironment {
         String username = IntegrationEnvironment.postgresContainer.getUsername();
 
         try {
-            connection = DriverManager.getConnection(
-                    url,
-                    username,
-                    password
-            );
+            connection = DriverManager.getConnection(url, username, password);
+
+            // Создание схемы "service"
+            try (Statement statement = connection.createStatement()) {
+                statement.execute("CREATE SCHEMA IF NOT EXISTS service;");
+            }
+
             Path path = new File(".")
                     .toPath()
                     .toAbsolutePath()
@@ -67,6 +70,8 @@ public class IntegrationEnvironment {
                     .resolve("migration");
 
             Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
+
+            database.setDefaultSchemaName(SCHEMA_CHANGE_LOG);
             Liquibase liquibase = new Liquibase(
                     "migration/master.xml",
                     new DirectoryResourceAccessor(path.getParent().toFile()),
