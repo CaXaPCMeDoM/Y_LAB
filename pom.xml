@@ -30,7 +30,7 @@
         <java.version>17</java.version>
         <mockito-core.version>5.12.0</mockito-core.version>
         <lombock.version>1.18.30</lombock.version>
-        <liquibase.version>3.6.2</liquibase.version>
+        <liquibase.version>4.29.1</liquibase.version>
         <postgresql.version>42.2.5</postgresql.version>
         <log4j.version>2.20.0</log4j.version>
     </properties>
@@ -39,6 +39,7 @@
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
+            <version>${liquibase.version}</version>
         </dependency>
         <!-- Dev Tools -->
         <dependency>
@@ -69,11 +70,6 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>${postgresql.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.liquibase</groupId>
-            <artifactId>liquibase-core</artifactId>
-            <version>${liquibase.version}</version>
         </dependency>
         <dependency>
             <groupId>org.yaml</groupId>
