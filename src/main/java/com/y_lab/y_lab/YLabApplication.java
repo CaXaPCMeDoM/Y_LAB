@@ -7,6 +7,8 @@ import com.y_lab.y_lab.out.Exporter;
 import com.y_lab.y_lab.out.Printer;
 import com.y_lab.y_lab.out.console.PrintToConsole;
 import com.y_lab.y_lab.out.file.FileExport;
+import com.y_lab.y_lab.repository.audit.AuditRepository;
+import com.y_lab.y_lab.repository.audit.JdbcAuditRepository;
 import com.y_lab.y_lab.repository.car.CarRepository;
 import com.y_lab.y_lab.repository.car.JdbcCarRepository;
 import com.y_lab.y_lab.repository.order.JdbcOrderRepository;
@@ -48,9 +50,10 @@ public class YLabApplication {
         UserRepository userRepository = new JdbcUserRepository(connection);
         CarRepository carRepository = new JdbcCarRepository(connection);
         OrderRepository orderRepository = new JdbcOrderRepository(connection);
+        AuditRepository auditRepository = new JdbcAuditRepository(connection);
         Exporter exporter = new FileExport(FILENAME_OUTPUT_LOG);
 
-        AuditService auditService = new AuditService(exporter);
+        AuditService auditService = new AuditService(auditRepository, exporter);
         UserService userService = new UserService(userRepository, auditService);
         CarService carService = new CarService(carRepository, auditService);
         OrderService orderService = new OrderService(orderRepository, auditService);
