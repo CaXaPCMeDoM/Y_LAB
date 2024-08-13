@@ -8,7 +8,6 @@ import com.y_lab.y_lab.service.logger.filter.Filter;
 
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 
 public class AuditService {
