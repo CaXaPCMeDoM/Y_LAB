@@ -8,19 +8,19 @@
     <changeSet id="insert-data" author="caxap">
         <sql>
             -- Вставка данных в таблицу user
-            INSERT INTO entity_schema.user (username, password, role) VALUES
-                                                                          ('admin', 'admin_password', 'ADMIN'),
-                                                                          ('manager', 'manager_password', 'MANAGER'),
-                                                                          ('user', 'user_password', 'USER');
+            INSERT INTO entity_schema.user (username, password, role)
+            VALUES ('admin', 'admin_password', 'ADMIN'),
+                   ('manager', 'manager_password', 'MANAGER'),
+                   ('user', 'user_password', 'USER');
 
             -- Вставка данных в таблицу car
-            INSERT INTO entity_schema.car (brand, model, year, price, state) VALUES
-                                                                                 ('Toyota', 'Corolla', 2020, 20000.00, 'NEW'),
-                                                                                 ('Honda', 'Civic', 2019, 18000.00, 'USED');
+            INSERT INTO entity_schema.car (brand, model, year, price, state)
+            VALUES ('Toyota', 'Corolla', 2020, 20000.00, 'NEW'),
+                   ('Honda', 'Civic', 2019, 18000.00, 'USED');
 
             -- Вставка данных в таблицу order
-            INSERT INTO entity_schema.order (car_id, user_id, status, order_date) VALUES
-                (1, 1, 'CREATED', NOW());
+            INSERT INTO entity_schema.order (car_id, user_id, status, order_date)
+            VALUES (1, 1, 'CREATED', NOW());
         </sql>
     </changeSet>
 

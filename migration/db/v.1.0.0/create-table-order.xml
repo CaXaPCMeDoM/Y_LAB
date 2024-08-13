@@ -5,7 +5,7 @@
    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.21.xsd">
 
     <changeSet id="create-table-order" author="caxap">
-        <sql>CREATE TABLE entity_schema.order
+        <sql>CREATE TABLE IF NOT EXISTS entity_schema.order
              (
                  id         BIGINT DEFAULT nextval('entity_schema.order_id_seq') PRIMARY key,
                  car_id     BIGINT      NOT NULL,

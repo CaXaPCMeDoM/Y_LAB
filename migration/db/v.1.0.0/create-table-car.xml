@@ -7,13 +7,14 @@
 
     <changeSet id="create-table-car" author="caxap">
         <sql>
-            CREATE TABLE entity_schema.car (
-                                               car_id BIGINT DEFAULT nextval('entity_schema.car_id_seq') PRIMARY KEY,
-                                               brand VARCHAR(255) NOT NULL,
-                                               model VARCHAR(255) NOT NULL,
-                                               year INT NOT NULL,
-                                               price DOUBLE PRECISION NOT NULL,
-                                               state VARCHAR(10) NOT NULL CHECK (state IN ('NEW', 'USED'))
+            CREATE TABLE IF NOT EXISTS entity_schema.car
+            (
+                car_id BIGINT DEFAULT nextval('entity_schema.car_id_seq') PRIMARY KEY,
+                brand  VARCHAR(255)     NOT NULL,
+                model  VARCHAR(255)     NOT NULL,
+                year   INT              NOT NULL,
+                price  DOUBLE PRECISION NOT NULL,
+                state  VARCHAR(10)      NOT NULL CHECK (state IN ('NEW', 'USED'))
             );
         </sql>
     </changeSet>
