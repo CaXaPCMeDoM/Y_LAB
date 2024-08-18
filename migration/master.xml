@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.21.xsd">
+
+    <changeSet id="add-tag-1.0.0" author="caxap">
+        <tagDatabase tag="v1.0.0"/>
+    </changeSet>
+
+    <include file="db/v.1.0.0/create_schema.xml" relativeToChangelogFile="true"/>
+    <include file="db/v.1.0.0/createSequence.xml" relativeToChangelogFile="true"/>
+    <include file="db/v.1.0.0/create-table-car.xml" relativeToChangelogFile="true"/>
+    <include file="db/v.1.0.0/create-table-user.xml" relativeToChangelogFile="true"/>
+    <include file="db/v.1.0.0/create-table-order.xml" relativeToChangelogFile="true"/>
+    <include file="db/v.1.0.0/insert-data.xml" relativeToChangelogFile="true"/>
+    <include file="db/v.1.0.0/audit-log.xml" relativeToChangelogFile="true"/>
+
+    <!-- Must be executed at the END-->
+    <include file="db/v.1.0.0/moving-service-tables-to-a-new-schema.xml" relativeToChangelogFile="true"/>
+</databaseChangeLog>

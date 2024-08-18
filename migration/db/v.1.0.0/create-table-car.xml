@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.21.xsd">
+
+    <changeSet id="create-table-car" author="caxap">
+        <sql>
+            CREATE TABLE IF NOT EXISTS entity_schema.car
+            (
+                car_id BIGINT DEFAULT nextval('entity_schema.car_id_seq') PRIMARY KEY,
+                brand  VARCHAR(255)     NOT NULL,
+                model  VARCHAR(255)     NOT NULL,
+                year   INT              NOT NULL,
+                price  DOUBLE PRECISION NOT NULL,
+                state  VARCHAR(10)      NOT NULL CHECK (state IN ('NEW', 'USED'))
+            );
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

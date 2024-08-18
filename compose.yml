@@ -1,0 +1,37 @@
+services:
+  car_dealership_db:
+    image: postgres:16
+    container_name: car_dealership_db
+    restart: always
+    ports:
+      - "5434:5432"
+    environment:
+      POSTGRES_DB: db
+      POSTGRES_USER: caxap
+      POSTGRES_PASSWORD: 1234
+    volumes:
+      - car_dealership_db:/var/lib/car_dealership_db/data
+    networks:
+      - my_backend
+  migration:
+    image: liquibase/liquibase:4.25
+    container_name: liquibase
+    depends_on:
+      - car_dealership_db
+    command:
+      - --changelog-file=master.xml
+      - --driver=org.postgresql.Driver
+      - --url=jdbc:postgresql://car_dealership_db:5432/db
+      - --username=caxap
+      - --password=1234
+      - update
+    volumes:
+      - ./migration:/liquibase/changelog
+    networks:
+      - my_backend
+
+volumes:
+  car_dealership_db: { }
+
+networks:
+  my_backend: { }

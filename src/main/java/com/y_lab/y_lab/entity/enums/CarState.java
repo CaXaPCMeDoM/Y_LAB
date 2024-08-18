@@ -4,8 +4,8 @@ import lombok.Getter;
 
 @Getter
 public enum CarState {
-    NEW("New"),
-    USED("Used");
+    NEW("NEW"),
+    USED("USED");
     private final String value;
 
     CarState(String value) {

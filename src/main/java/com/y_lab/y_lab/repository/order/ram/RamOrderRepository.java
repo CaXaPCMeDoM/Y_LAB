@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.stream.Collectors;
 
+@Deprecated
 public class RamOrderRepository implements OrderRepository {
     @Getter
     private static Queue<Order> orderQueue = new LinkedList<>();

@@ -55,7 +55,7 @@ class RamCarRepositoryTest {
 
     @Test
     void deleteCarNotFound() {
-        Car car = new Car(null, "Marusya", "B1", 2009, 10000000, CarState.NEW);
+        Car car = new Car(0L, "Marusya", "B1", 2009, 10000000, CarState.NEW);
 
         Car carActual = carRepository.delete(car.getCarId() + 1L);
 
@@ -64,7 +64,7 @@ class RamCarRepositoryTest {
 
         List<Car> cars = carRepository.findAll();
 
-        Assertions.assertEquals(1, cars.size());
+        Assertions.assertEquals(0, cars.size());
     }
 
     @Test

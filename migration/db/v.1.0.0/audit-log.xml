@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.21.xsd">
+
+    <changeSet id="create-audit-log-table" author="caxap">
+        <sql>
+            CREATE TABLE IF NOT EXISTS service.audit_log
+            (
+                id SERIAL PRIMARY KEY,
+                user_id BIGINT NOT NULL,
+                action_type VARCHAR(50) NOT NULL,
+                action_date TIMESTAMP NOT NULL,
+                FOREIGN KEY (user_id) REFERENCES entity_schema.user (user_id)
+            );
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

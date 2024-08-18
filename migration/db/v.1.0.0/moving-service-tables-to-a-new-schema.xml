@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.21.xsd">
+
+    <changeSet id="move-changelog-tables" author="caxap">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="2">
+                SELECT COUNT(*)
+                FROM information_schema.tables
+                WHERE table_schema = 'public'
+                  AND table_name IN ('databasechangelog', 'databasechangeloglock');
+            </sqlCheck>
+        </preConditions>
+        <sql>
+            ALTER TABLE public.databasechangelog SET SCHEMA service;
+            ALTER TABLE public.databasechangeloglock SET SCHEMA service;
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

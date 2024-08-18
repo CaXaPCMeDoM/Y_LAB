@@ -8,6 +8,7 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.List;
 
+@Deprecated
 public class RamUserRepository implements UserRepository {
     private static final List<User> users;
     @Getter
