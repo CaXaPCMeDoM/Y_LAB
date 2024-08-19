@@ -7,6 +7,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.AllArgsConstructor;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 @WebServlet("/orders/filter")
+@AllArgsConstructor
 public class OrderFilterServlet extends HttpServlet {
     private final ChainFilter chainFilter;
     private final ObjectMapper objectMapper;

@@ -1,10 +1,10 @@
 package com.y_lab.y_lab.service;
 
+import com.y_lab.y_lab.annotation.Loggable;
 import com.y_lab.y_lab.entity.Car;
 import com.y_lab.y_lab.entity.enums.ActionType;
 import com.y_lab.y_lab.exception.CarNotFound;
 import com.y_lab.y_lab.repository.car.CarRepository;
-import com.y_lab.y_lab.security.UserContext;
 import com.y_lab.y_lab.service.logger.AuditService;
 
 import java.util.List;
@@ -18,20 +18,17 @@ public class CarService {
         this.auditService = auditService;
     }
 
+    @Loggable(action_type = ActionType.ADD_CAR)
     public void addCar(Car car) {
         try {
             carRepository.add(car);
-
-            auditService.log(UserContext.getCurrentUser().getUserId(), ActionType.ADD_CAR);
-        } catch (Exception ex) {
-            // TODO (log.INFO)
+        } catch (Exception ignored) {
         }
     }
 
+    @Loggable(action_type = ActionType.REMOVE_CAR)
     public Car removeCar(Long id) {
         Car car = carRepository.delete(id);
-
-        auditService.log(UserContext.getCurrentUser().getUserId(), ActionType.REMOVE_CAR);
         return car;
     }
 
@@ -39,10 +36,9 @@ public class CarService {
         return carRepository.findAll();
     }
 
+    @Loggable(action_type = ActionType.EDIT_CAR)
     public void editCar(Long id, Car car) throws CarNotFound {
-        if (carRepository.editCar(id, car)) {
-            auditService.log(UserContext.getCurrentUser().getUserId(), ActionType.EDIT_CAR);
-        } else {
+        if (!carRepository.editCar(id, car)) {
             throw new CarNotFound();
         }
     }

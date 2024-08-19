@@ -2,7 +2,6 @@ package com.y_lab.y_lab.service;
 
 import com.y_lab.y_lab.entity.User;
 import com.y_lab.y_lab.entity.UserInfo;
-import com.y_lab.y_lab.entity.enums.ActionType;
 import com.y_lab.y_lab.entity.enums.Role;
 import com.y_lab.y_lab.exception.AuthorizationFailedForTheRole;
 import com.y_lab.y_lab.exception.InvalidUsernameOrPassword;
@@ -47,7 +46,6 @@ class UserServiceTest {
 
         // Assert
         verify(userRepository).add(user);
-        verify(auditService).log(user.getUserId(), ActionType.REGISTRATION);
         assertNotNull(UserContext.getCurrentUser());
     }
 
@@ -72,7 +70,6 @@ class UserServiceTest {
         User result = userService.authorization(user.getUsername(), user.getPassword());
 
         // Assert
-        verify(auditService).log(user.getUserId(), ActionType.AUTHORIZATION);
         assertEquals(user, result);
         assertNotNull(UserContext.getCurrentUser());
     }
@@ -107,7 +104,6 @@ class UserServiceTest {
         userService.logout();
 
         // Assert
-        verify(auditService).log(user.getUserId(), ActionType.LOGOUT);
         assertNull(UserContext.getCurrentUser());
     }
 

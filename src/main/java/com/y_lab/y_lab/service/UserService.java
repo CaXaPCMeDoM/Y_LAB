@@ -1,5 +1,6 @@
 package com.y_lab.y_lab.service;
 
+import com.y_lab.y_lab.annotation.Loggable;
 import com.y_lab.y_lab.entity.User;
 import com.y_lab.y_lab.entity.enums.ActionType;
 import com.y_lab.y_lab.exception.AuthorizationFailedForTheRole;
@@ -31,13 +32,13 @@ public class UserService {
         this.chainOfRole = new ChainOfRole();
     }
 
+    @Loggable(action_type = ActionType.REGISTRATION)
     public void registerUser(User user) throws AuthorizationFailedForTheRole, UserIsAlreadyRegistered {
         if (!chainOfRole.assemblingTheChain(user.getRole())) { // если роль не соответствует пользователю
             throw new AuthorizationFailedForTheRole();
         } else if (userRepository.findByUsername(user.getUsername()) == null) {
             userRepository.add(user);
 
-            auditService.log(user.getUserId(), ActionType.REGISTRATION);
             UserInfo userInfo = MappingUserAndUserInfo.userToUserInfo(user);
             UserContext.setCurrentUser(userInfo);
         } else { // если уже зарегистрирован
@@ -45,6 +46,7 @@ public class UserService {
         }
     }
 
+    @Loggable(action_type = ActionType.AUTHORIZATION)
     public User authorization(String username, String password) throws InvalidUsernameOrPassword {
         User user = userRepository.findByUsername(username);
         if (user == null || (!password.equals(user.getPassword()))) { // Не прошла авторизация
@@ -52,19 +54,19 @@ public class UserService {
         } else {
             UserInfo userInfo = MappingUserAndUserInfo.userToUserInfo(user);
             UserContext.setCurrentUser(userInfo);
-            auditService.log(user.getUserId(), ActionType.AUTHORIZATION);
             return user;
         }
     }
 
+    @Loggable(action_type = ActionType.LOGOUT)
     public void logout() {
-        auditService.log(UserContext.getCurrentUser().getUserId(), ActionType.LOGOUT);
         UserContext.clear();
     }
 
     public List<User> getAll() {
         return userRepository.getUsers();
     }
+
     public List<User> getFilteredUsers(UserFilter userFilter) {
         userProfileService.setUserFilter(userFilter);
         return userProfileService.getFilteredUsers();
