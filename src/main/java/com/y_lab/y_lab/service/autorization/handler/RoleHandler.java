@@ -6,11 +6,7 @@ public abstract class RoleHandler {
     protected RoleHandler roleHandler;
 
     public RoleHandler setNextHandler(RoleHandler roleHandler) {
-        if (roleHandler == null) {
-            this.roleHandler = roleHandler;
-        } else {
-            roleHandler.setNextHandler(roleHandler);
-        }
+        this.roleHandler = roleHandler;
         return this;
     }
 
