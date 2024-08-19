@@ -15,7 +15,7 @@ public abstract class FilterHandler {
         return this;
     }
 
-    public List<Order> handle(String filterName, String[] arguments) throws ParseException {
+    public List<Order> handle(String filterName, String[] arguments) {
         FilterHandler checkFilterName = filterHandler.checkFilterName(filterName);
         if (checkFilterName == null) {
             return filterHandler.handle(filterName, arguments);

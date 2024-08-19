@@ -7,9 +7,9 @@ import com.y_lab.y_lab.service.autorization.role.UserRole;
 import com.y_lab.y_lab.service.autorization.handler.RoleHandler;
 
 public class ChainOfRole {
-    private RoleHandler adminRole;
-    private RoleHandler managerRole;
-    private RoleHandler userRole;
+    private final RoleHandler adminRole;
+    private final RoleHandler managerRole;
+    private final RoleHandler userRole;
 
     public ChainOfRole() {
         adminRole = new AdminRole();
