@@ -10,6 +10,7 @@ import com.y_lab.y_lab.starter.manager.AuditManagement;
 import com.y_lab.y_lab.starter.manager.CarManagement;
 import com.y_lab.y_lab.starter.manager.OrderManagement;
 import com.y_lab.y_lab.starter.manager.UserManagement;
+import lombok.Getter;
 
 /**
  * Класс CarDealerApplication представляет собой главную точку входа для системы управления автодилера.
@@ -19,9 +20,13 @@ public class CarDealerApplication {
     private final Printer printer;
     private final Input input;
 
+    @Getter
     private final UserService userService;
+    @Getter
     private final CarService carService;
+    @Getter
     private final OrderService orderService;
+    @Getter
     private final AuditService auditService;
 
     /**
