@@ -1,9 +1,11 @@
 package com.y_lab.y_lab.repository.car;
 
 import com.y_lab.y_lab.entity.Car;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public interface CarRepository {
     Long add(Car car);
 

@@ -2,6 +2,7 @@ package com.y_lab.y_lab.repository.order;
 
 import com.y_lab.y_lab.entity.Order;
 import com.y_lab.y_lab.entity.enums.OrderStatus;
+import org.springframework.stereotype.Repository;
 
 import java.sql.Timestamp;
 import java.util.List;

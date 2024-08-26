@@ -1,7 +1,6 @@
 package com.y_lab.y_lab.web.audit;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.y_lab.y_lab.config.ServiceContainer;
 import com.y_lab.y_lab.service.logger.AuditService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;

@@ -1,16 +1,31 @@
 package com.y_lab.y_lab.repository.car;
 
 import com.y_lab.y_lab.IntegrationEnvironment;
+import com.y_lab.y_lab.config.DatabaseConfig;
 import com.y_lab.y_lab.entity.Car;
 import com.y_lab.y_lab.entity.enums.CarState;
+import com.y_lab.y_lab.repository.user.JdbcUserRepository;
 import org.junit.jupiter.api.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.context.ContextConfiguration;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@ContextConfiguration(classes = {DatabaseConfig.class, JdbcCarRepository.class})
 public class JdbcCarRepositoryTest extends IntegrationEnvironment {
-    private static final JdbcCarRepository carRepository = new JdbcCarRepository(IntegrationEnvironment.connection);
+    private JdbcCarRepository carRepository;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    @BeforeEach
+    void setUp() {
+        carRepository = new JdbcCarRepository(jdbcTemplate);
+    }
+
 
     @Test
     public void addCar() {

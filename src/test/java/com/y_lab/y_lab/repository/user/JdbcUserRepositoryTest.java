@@ -1,17 +1,31 @@
 package com.y_lab.y_lab.repository.user;
 
 import com.y_lab.y_lab.IntegrationEnvironment;
+import com.y_lab.y_lab.config.DatabaseConfig;
 import com.y_lab.y_lab.entity.User;
 import com.y_lab.y_lab.entity.enums.Role;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.context.ContextConfiguration;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@ContextConfiguration(classes = {DatabaseConfig.class, JdbcUserRepository.class})
 class JdbcUserRepositoryTest extends IntegrationEnvironment {
+    private JdbcUserRepository userRepository;
 
-    private static final JdbcUserRepository userRepository = new JdbcUserRepository((IntegrationEnvironment.connection));
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    @BeforeEach
+    void setUp() {
+        userRepository = new JdbcUserRepository(jdbcTemplate);
+    }
+
 
     @Test
     public void testAddUser() {

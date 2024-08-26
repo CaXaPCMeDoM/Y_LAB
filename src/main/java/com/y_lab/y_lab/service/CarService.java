@@ -6,16 +6,16 @@ import com.y_lab.y_lab.entity.enums.ActionType;
 import com.y_lab.y_lab.exception.CarNotFound;
 import com.y_lab.y_lab.repository.car.CarRepository;
 import com.y_lab.y_lab.service.logger.AuditService;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class CarService {
     private final CarRepository carRepository;
-    private final AuditService auditService;
 
-    public CarService(CarRepository carRepository, AuditService auditService) {
+    public CarService(CarRepository carRepository) {
         this.carRepository = carRepository;
-        this.auditService = auditService;
     }
 
     @Loggable(action_type = ActionType.ADD_CAR)

@@ -2,7 +2,6 @@ package com.y_lab.y_lab.web.registation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.y_lab.y_lab.config.ServiceContainer;
 import com.y_lab.y_lab.entity.User;
 import com.y_lab.y_lab.exception.AuthorizationFailedForTheRole;
 import com.y_lab.y_lab.exception.UserIsAlreadyRegistered;
@@ -18,13 +17,6 @@ import java.io.IOException;
 public class Registration extends HttpServlet {
     private final ObjectMapper objectMapper;
     private final UserService userService;
-
-    public Registration() {
-        objectMapper = new ObjectMapper()
-                .configure(SerializationFeature.INDENT_OUTPUT, true);
-
-        userService = ServiceContainer.getUserService();
-    }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) {

@@ -7,18 +7,17 @@ import com.y_lab.y_lab.entity.enums.OrderStatus;
 import com.y_lab.y_lab.exception.OrderForTheCarAlreadyExists;
 import com.y_lab.y_lab.repository.order.OrderRepository;
 import com.y_lab.y_lab.service.logger.AuditService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.util.List;
 
+@Service
+@RequiredArgsConstructor
 public class OrderService {
     private final OrderRepository orderRepository;
     private final AuditService auditService;
-
-    public OrderService(OrderRepository orderRepository, AuditService auditService) {
-        this.orderRepository = orderRepository;
-        this.auditService = auditService;
-    }
 
     @Loggable(action_type = ActionType.CREATE_ORDER)
     public Order createOrder(Long carId, Long customerId) throws OrderForTheCarAlreadyExists {
