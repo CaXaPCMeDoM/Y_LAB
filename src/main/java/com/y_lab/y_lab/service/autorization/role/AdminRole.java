@@ -2,7 +2,9 @@ package com.y_lab.y_lab.service.autorization.role;
 
 import com.y_lab.y_lab.entity.enums.Role;
 import com.y_lab.y_lab.service.autorization.handler.RoleHandler;
+import org.springframework.stereotype.Component;
 
+@Component
 public class AdminRole extends RoleHandler {
     @Override
     public boolean handlerRole(Role role) {

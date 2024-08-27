@@ -16,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @ContextConfiguration(classes = {DatabaseConfig.class, JdbcUserRepository.class})
 class JdbcUserRepositoryTest extends IntegrationEnvironment {
+    @Autowired
     private JdbcUserRepository userRepository;
 
     @Autowired

@@ -5,12 +5,12 @@ import com.y_lab.y_lab.entity.enums.Role;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Repository;
 
-import java.sql.*;
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
+@Repository
 public class JdbcUserRepository implements UserRepository {
     private final JdbcTemplate jdbcTemplate;
     private static final RowMapper<User> USER_ROW_MAPPER = (rs, rowNum) ->
@@ -58,7 +58,7 @@ public class JdbcUserRepository implements UserRepository {
     public User findByUsername(String username) {
         String sql = "SELECT * FROM entity_schema.user WHERE username = ?";
         try {
-            return jdbcTemplate.queryForObject(sql, new Object[]{username}, USER_ROW_MAPPER);
+            return jdbcTemplate.queryForObject(sql, USER_ROW_MAPPER, username);
         } catch (Exception e) {
             log.error("Error executing SQL query", e);
             throw new RuntimeException(e);

@@ -1,40 +1,37 @@
 package com.y_lab.y_lab.web.registation;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.y_lab.y_lab.entity.User;
 import com.y_lab.y_lab.exception.AuthorizationFailedForTheRole;
 import com.y_lab.y_lab.exception.UserIsAlreadyRegistered;
 import com.y_lab.y_lab.service.UserService;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 
-@WebServlet("/registration")
-public class Registration extends HttpServlet {
-    private final ObjectMapper objectMapper;
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/registration")
+public class Registration {
     private final UserService userService;
 
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
+    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> registerUser(@RequestBody User user) {
         try {
-            User user = objectMapper.readValue(req.getInputStream(), User.class);
-
             userService.registerUser(user);
-
-            resp.setContentType("application/json");
-            resp.setStatus(HttpServletResponse.SC_OK);
-        } catch (IOException e) {
-            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return ResponseEntity.ok().build();
         } catch (UserIsAlreadyRegistered e) {
-            resp.setStatus(HttpServletResponse.SC_CONFLICT);
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("User is already registered.");
         } catch (AuthorizationFailedForTheRole e) {
-            resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Authorization failed for the role.");
         } catch (Exception e) {
-            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred.");
         }
     }
 }

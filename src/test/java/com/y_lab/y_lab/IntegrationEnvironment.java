@@ -1,5 +1,7 @@
 package com.y_lab.y_lab;
 
+import com.y_lab.y_lab.config.DatabaseConfig;
+import com.y_lab.y_lab.repository.audit.JdbcAuditRepository;
 import liquibase.Contexts;
 import liquibase.LabelExpression;
 import liquibase.Liquibase;
@@ -9,6 +11,9 @@ import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.LiquibaseException;
 import liquibase.resource.DirectoryResourceAccessor;
 import org.junit.jupiter.api.BeforeAll;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -22,6 +27,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 @Testcontainers
+@SpringJUnitConfig(classes = {DatabaseConfig.class, JdbcAuditRepository.class})
+@Transactional
+@Rollback
 public class IntegrationEnvironment {
     private static final String SCHEMA_CHANGE_LOG = "service";
     @Container

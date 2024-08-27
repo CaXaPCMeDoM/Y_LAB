@@ -5,11 +5,13 @@ import com.y_lab.y_lab.entity.enums.OrderStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Repository;
 
 import java.sql.*;
 import java.util.List;
 
 @Slf4j
+@Repository
 public class JdbcOrderRepository implements OrderRepository {
     private final JdbcTemplate jdbcTemplate;
 

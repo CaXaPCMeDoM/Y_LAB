@@ -1,52 +1,40 @@
 package com.y_lab.y_lab.web.login;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.y_lab.y_lab.config.ServiceContainer;
 import com.y_lab.y_lab.entity.User;
 import com.y_lab.y_lab.entity.dto.response.UserResponseDto;
 import com.y_lab.y_lab.exception.InvalidUsernameOrPassword;
 import com.y_lab.y_lab.mapper.UserMapper;
 import com.y_lab.y_lab.service.UserService;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
+import java.util.Map;
 
-@WebServlet("/login")
-public class Login extends HttpServlet {
-    private final ObjectMapper objectMapper;
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/login")
+public class Login {
     private final UserService userService;
     private final UserMapper userMapper;
 
-    public Login() {
-        this.objectMapper = new ObjectMapper()
-                .configure(SerializationFeature.INDENT_OUTPUT, true);
-        this.userService = ServiceContainer.getUserService();
-        userMapper = UserMapper.INSTANCE;
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
+    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    protected ResponseEntity<?> doPost(@RequestBody User user) {
         try {
-            User user = objectMapper.readValue(req.getInputStream(), User.class);
-
             User registeredUser = userService.authorization(user.getUsername(), user.getPassword());
 
             UserResponseDto userResponseDto = userMapper.toUserResponseDto(user);
 
-            String jsonResponse = objectMapper.writeValueAsString(userResponseDto);
-
-            resp.setStatus(HttpServletResponse.SC_OK);
-            resp.setContentType("application/json");
-
-            resp.getWriter().write(jsonResponse);
-        } catch (IOException e) {
-            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return ResponseEntity.ok(userResponseDto);
         } catch (InvalidUsernameOrPassword e) {
-            resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            return ResponseEntity.status(HttpServletResponse.SC_FORBIDDEN).body(Map.of("error", "Invalid username or password."));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Invalid request."));
         }
     }
 }

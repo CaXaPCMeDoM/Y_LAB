@@ -1,17 +1,32 @@
 package com.y_lab.y_lab.repository.audit;
 
 import com.y_lab.y_lab.IntegrationEnvironment;
+import com.y_lab.y_lab.config.DatabaseConfig;
 import com.y_lab.y_lab.entity.AuditEntity;
 import com.y_lab.y_lab.entity.enums.ActionType;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import java.sql.Timestamp;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SpringJUnitConfig(classes = {DatabaseConfig.class, JdbcAuditRepository.class})
 class JdbcAuditRepositoryTest extends IntegrationEnvironment {
-    private final  JdbcAuditRepository auditRepository = new JdbcAuditRepository(IntegrationEnvironment.connection);
+    @Autowired
+    private JdbcAuditRepository auditRepository;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    @BeforeEach
+    void setUp() {
+        auditRepository = new JdbcAuditRepository(jdbcTemplate);
+    }
 
     @Test
     void testSaveAuditLog() {
