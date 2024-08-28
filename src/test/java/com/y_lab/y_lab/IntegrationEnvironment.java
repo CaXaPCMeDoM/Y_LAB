@@ -46,19 +46,16 @@ public class IntegrationEnvironment {
 
     protected static Connection connection;
 
-    static {
-        postgresContainer.start();
-        runMigration();
-    }
-
     @DynamicPropertySource
     static void registerDynamicProperties(DynamicPropertyRegistry registry) {
         registry.add("spring.datasource.url", postgresContainer::getJdbcUrl);
         registry.add("spring.datasource.username", postgresContainer::getUsername);
         registry.add("spring.datasource.password", postgresContainer::getPassword);
+        runMigration();
     }
 
     private static void runMigration() {
+        postgresContainer.start();
         String url = postgresContainer.getJdbcUrl();
         String password = postgresContainer.getPassword();
         String username = postgresContainer.getUsername();
