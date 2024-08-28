@@ -13,6 +13,11 @@ import java.util.List;
 @Repository
 public class JdbcUserRepository implements UserRepository {
     private final JdbcTemplate jdbcTemplate;
+
+    private static final String INSERT_USER_SQL = "INSERT INTO entity_schema.user (username, password, role) VALUES (?, ?, ?) RETURNING user_id";
+    private static final String SELECT_ALL_USERS_SQL = "SELECT * FROM entity_schema.user";
+    private static final String SELECT_USER_BY_USERNAME_SQL = "SELECT * FROM entity_schema.user WHERE username = ?";
+
     private static final RowMapper<User> USER_ROW_MAPPER = (rs, rowNum) ->
             new User(
                     rs.getLong("user_id"),
@@ -27,10 +32,9 @@ public class JdbcUserRepository implements UserRepository {
 
     @Override
     public void add(User user) {
-        String sql = "INSERT INTO entity_schema.user (username, password, role) VALUES (?, ?, ?) RETURNING user_id";
         try {
             Long userId = jdbcTemplate.queryForObject(
-                    sql,
+                    INSERT_USER_SQL,
                     new Object[]{user.getUsername(), user.getPassword(), user.getRole().name()},
                     Long.class
             );
@@ -45,9 +49,8 @@ public class JdbcUserRepository implements UserRepository {
 
     @Override
     public List<User> getUsers() {
-        String sql = "SELECT * FROM entity_schema.user";
         try {
-            return jdbcTemplate.query(sql, USER_ROW_MAPPER);
+            return jdbcTemplate.query(SELECT_ALL_USERS_SQL, USER_ROW_MAPPER);
         } catch (Exception e) {
             log.error("Error executing SQL query", e);
             throw new RuntimeException(e);
@@ -56,9 +59,8 @@ public class JdbcUserRepository implements UserRepository {
 
     @Override
     public User findByUsername(String username) {
-        String sql = "SELECT * FROM entity_schema.user WHERE username = ?";
         try {
-            return jdbcTemplate.queryForObject(sql, USER_ROW_MAPPER, username);
+            return jdbcTemplate.queryForObject(SELECT_USER_BY_USERNAME_SQL, USER_ROW_MAPPER, username);
         } catch (Exception e) {
             log.error("Error executing SQL query", e);
             throw new RuntimeException(e);

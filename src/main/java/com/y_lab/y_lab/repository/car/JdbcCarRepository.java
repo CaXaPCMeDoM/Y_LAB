@@ -49,6 +49,15 @@ public class JdbcCarRepository implements CarRepository {
                     CarState.valueOf(rs.getString("state").toUpperCase()));
     private static final String ADD_ERROR_MESSAGE_EXCEPTION = "Failed to add car to the database";
     private static final String DELETE_ERROR_MESSAGE_EXCEPTION = "Failed to delete car from the database";
+    private static final String ADD_CAR_SQL = "INSERT INTO entity_schema.car (brand, model, year, price, state) VALUES (?, ?, ?, ?, ?) RETURNING car_id";
+    private static final String DELETE_CAR_SQL = "DELETE FROM entity_schema.car WHERE car_id = ? RETURNING *";
+    private static final String FIND_ALL_CARS_SQL = "SELECT * FROM entity_schema.car";
+    private static final String UPDATE_CAR_SQL = "UPDATE entity_schema.car SET brand = ?, model = ?, year = ?, price = ?, state = ? WHERE car_id = ?";
+    private static final String FIND_BY_BRAND_SQL = "SELECT * FROM entity_schema.car WHERE brand = ?";
+    private static final String FIND_BY_MODEL_SQL = "SELECT * FROM entity_schema.car WHERE model = ?";
+    private static final String FIND_BY_YEAR_SQL = "SELECT * FROM entity_schema.car WHERE year = ?";
+    private static final String FIND_BY_PRICE_RANGE_SQL = "SELECT * FROM entity_schema.car WHERE price BETWEEN ? AND ?";
+
 
     /**
      * Constructs a new {@code JdbcCarRepository} with the specified JDBC connection.
@@ -69,10 +78,9 @@ public class JdbcCarRepository implements CarRepository {
     @Override
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public Long add(Car car) {
-        String sql = "INSERT INTO entity_schema.car (brand, model, year, price, state) VALUES (?, ?, ?, ?, ?) RETURNING car_id";
         try {
             return jdbcTemplate.queryForObject(
-                    sql,
+                    ADD_CAR_SQL,
                     new Object[]{
                             car.getBrand(),
                             car.getModel(),
@@ -98,9 +106,8 @@ public class JdbcCarRepository implements CarRepository {
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public Car delete(Long id) {
-        String sql = "DELETE FROM entity_schema.car WHERE car_id = ? RETURNING *";
         try {
-            return jdbcTemplate.queryForObject(sql, new Object[]{id}, CAR_ROW_MAPPER);
+            return jdbcTemplate.queryForObject(DELETE_CAR_SQL, new Object[]{id}, CAR_ROW_MAPPER);
         } catch (Exception e) {
             log.error(DELETE_ERROR_MESSAGE_EXCEPTION, e);
             throw new RuntimeException(DELETE_ERROR_MESSAGE_EXCEPTION, e);
@@ -116,9 +123,8 @@ public class JdbcCarRepository implements CarRepository {
     @Override
     @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
     public List<Car> findAll() {
-        String sql = "SELECT * FROM entity_schema.car";
         try {
-            return jdbcTemplate.query(sql, CAR_ROW_MAPPER);
+            return jdbcTemplate.query(FIND_ALL_CARS_SQL, CAR_ROW_MAPPER);
         } catch (Exception e) {
             log.error("Failed to retrieve cars from the database", e);
             throw new RuntimeException("Failed to retrieve cars from the database", e);
@@ -136,9 +142,8 @@ public class JdbcCarRepository implements CarRepository {
     @Override
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public boolean editCar(Long id, Car updatedCar) {
-        String sql = "UPDATE entity_schema.car SET brand = ?, model = ?, year = ?, price = ?, state = ? WHERE car_id = ?";
         try {
-            int rowsAffected = jdbcTemplate.update(sql,
+            int rowsAffected = jdbcTemplate.update(UPDATE_CAR_SQL,
                     updatedCar.getBrand(),
                     updatedCar.getModel(),
                     updatedCar.getYear(),
@@ -163,9 +168,8 @@ public class JdbcCarRepository implements CarRepository {
     @Override
     @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
     public List<Car> findByBrand(String brand) {
-        String sql = "SELECT * FROM entity_schema.car WHERE brand = ?";
         try {
-            return jdbcTemplate.query(sql, new Object[]{brand}, CAR_ROW_MAPPER);
+            return jdbcTemplate.query(FIND_BY_BRAND_SQL, new Object[]{brand}, CAR_ROW_MAPPER);
         } catch (Exception e) {
             log.error("Failed to retrieve cars by brand from the database", e);
             throw new RuntimeException("Failed to retrieve cars by brand from the database", e);
@@ -182,9 +186,8 @@ public class JdbcCarRepository implements CarRepository {
     @Override
     @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
     public List<Car> findByModel(String model) {
-        String sql = "SELECT * FROM entity_schema.car WHERE model = ?";
         try {
-            return jdbcTemplate.query(sql, new Object[]{model}, CAR_ROW_MAPPER);
+            return jdbcTemplate.query(FIND_BY_MODEL_SQL, new Object[]{model}, CAR_ROW_MAPPER);
         } catch (Exception e) {
             log.error("Failed to retrieve cars by model from the database", e);
             throw new RuntimeException("Failed to retrieve cars by model from the database", e);
@@ -201,9 +204,8 @@ public class JdbcCarRepository implements CarRepository {
     @Override
     @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
     public List<Car> findByYear(int year) {
-        String sql = "SELECT * FROM entity_schema.car WHERE year = ?";
         try {
-            return jdbcTemplate.query(sql, new Object[]{year}, CAR_ROW_MAPPER);
+            return jdbcTemplate.query(FIND_BY_YEAR_SQL, new Object[]{year}, CAR_ROW_MAPPER);
         } catch (Exception e) {
             log.error("Failed to retrieve cars by year from the database", e);
             throw new RuntimeException("Failed to retrieve cars by year from the database", e);
@@ -221,30 +223,11 @@ public class JdbcCarRepository implements CarRepository {
     @Override
     @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
     public List<Car> findByPriceRange(double minPrice, double maxPrice) {
-        String sql = "SELECT * FROM entity_schema.car WHERE price BETWEEN ? AND ?";
         try {
-            return jdbcTemplate.query(sql, new Object[]{minPrice, maxPrice}, CAR_ROW_MAPPER);
+            return jdbcTemplate.query(FIND_BY_PRICE_RANGE_SQL, new Object[]{minPrice, maxPrice}, CAR_ROW_MAPPER);
         } catch (Exception e) {
             log.error("Failed to retrieve cars by price range from the database", e);
             throw new RuntimeException("Failed to retrieve cars by price range from the database", e);
         }
-    }
-
-    /**
-     * Maps a {@link ResultSet} row to a {@link Car} entity.
-     *
-     * @param resultSet the {@link ResultSet} to map
-     * @return a {@link Car} entity representing the current row in the {@link ResultSet}
-     * @throws SQLException if an error occurs while accessing the {@link ResultSet}
-     */
-    private Car mapRowToCar(ResultSet resultSet) throws SQLException {
-        return new Car(
-                resultSet.getLong("car_id"),
-                resultSet.getString("brand"),
-                resultSet.getString("model"),
-                resultSet.getInt("year"),
-                resultSet.getDouble("price"),
-                CarState.valueOf(resultSet.getString("state").toUpperCase())
-        );
     }
 }
