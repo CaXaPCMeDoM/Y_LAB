@@ -2,6 +2,7 @@ package com.y_lab.y_lab.web.order.service.chain;
 
 import com.y_lab.y_lab.entity.Order;
 import com.y_lab.y_lab.web.order.service.chain.handler.FilterHandler;
+import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.text.ParseException;
@@ -9,16 +10,14 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+@Service
 public class DateFilterHandler extends FilterHandler {
     private final static String FILTER_NAME = "date";
 
+
     @Override
-    protected FilterHandler checkFilterName(String filterName) {
-        if (FILTER_NAME.equals(filterName)) {
-            return this;
-        } else {
-            return null;
-        }
+    protected boolean isApplicable(String filterName) {
+        return FILTER_NAME.equals(filterName);
     }
 
     @Override

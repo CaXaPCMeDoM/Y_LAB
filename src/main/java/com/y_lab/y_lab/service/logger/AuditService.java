@@ -5,11 +5,13 @@ import com.y_lab.y_lab.entity.enums.ActionType;
 import com.y_lab.y_lab.out.Exporter;
 import com.y_lab.y_lab.repository.audit.AuditRepository;
 import com.y_lab.y_lab.service.logger.filter.Filter;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.List;
 
+@Service
 public class AuditService {
 
     private final AuditRepository auditRepository;

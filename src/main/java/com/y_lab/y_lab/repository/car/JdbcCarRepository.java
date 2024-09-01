@@ -3,6 +3,11 @@ package com.y_lab.y_lab.repository.car;
 import com.y_lab.y_lab.entity.Car;
 import com.y_lab.y_lab.entity.enums.CarState;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -31,16 +36,36 @@ import java.util.List;
  * @see Car
  */
 @Slf4j
+@Repository
 public class JdbcCarRepository implements CarRepository {
-    private final Connection connection;
+    private final JdbcTemplate jdbcTemplate;
+    private static final RowMapper<Car> CAR_ROW_MAPPER = (rs, rowNum) ->
+            new Car(
+                    rs.getLong("car_id"),
+                    rs.getString("brand"),
+                    rs.getString("model"),
+                    rs.getInt("year"),
+                    rs.getDouble("price"),
+                    CarState.valueOf(rs.getString("state").toUpperCase()));
+    private static final String ADD_ERROR_MESSAGE_EXCEPTION = "Failed to add car to the database";
+    private static final String DELETE_ERROR_MESSAGE_EXCEPTION = "Failed to delete car from the database";
+    private static final String ADD_CAR_SQL = "INSERT INTO entity_schema.car (brand, model, year, price, state) VALUES (?, ?, ?, ?, ?) RETURNING car_id";
+    private static final String DELETE_CAR_SQL = "DELETE FROM entity_schema.car WHERE car_id = ? RETURNING *";
+    private static final String FIND_ALL_CARS_SQL = "SELECT * FROM entity_schema.car";
+    private static final String UPDATE_CAR_SQL = "UPDATE entity_schema.car SET brand = ?, model = ?, year = ?, price = ?, state = ? WHERE car_id = ?";
+    private static final String FIND_BY_BRAND_SQL = "SELECT * FROM entity_schema.car WHERE brand = ?";
+    private static final String FIND_BY_MODEL_SQL = "SELECT * FROM entity_schema.car WHERE model = ?";
+    private static final String FIND_BY_YEAR_SQL = "SELECT * FROM entity_schema.car WHERE year = ?";
+    private static final String FIND_BY_PRICE_RANGE_SQL = "SELECT * FROM entity_schema.car WHERE price BETWEEN ? AND ?";
+
 
     /**
      * Constructs a new {@code JdbcCarRepository} with the specified JDBC connection.
      *
-     * @param connection the JDBC {@link Connection} to be used by this repository
+     * @param jdbcTemplate the JDBC {@link JdbcTemplate} to be used by this repository
      */
-    public JdbcCarRepository(Connection connection) {
-        this.connection = connection;
+    public JdbcCarRepository(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     /**
@@ -51,32 +76,24 @@ public class JdbcCarRepository implements CarRepository {
      * @throws RuntimeException if the car cannot be added due to a SQL or transaction error
      */
     @Override
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public Long add(Car car) {
-        String sql = "INSERT INTO entity_schema.car (brand, model, year, price, state) VALUES (?, ?, ?, ?, ?) RETURNING car_id";
         try {
-            connection.setAutoCommit(false);
-            try (PreparedStatement statement = connection.prepareStatement(sql)) {
-                statement.setString(1, car.getBrand());
-                statement.setString(2, car.getModel());
-                statement.setInt(3, car.getYear());
-                statement.setDouble(4, car.getPrice());
-                statement.setString(5, car.getState().getValue());
-                ResultSet resultSet = statement.executeQuery();
-                if (resultSet.next()) {
-                    Long carId = resultSet.getLong("car_id");
-                    connection.commit();
-                    return carId;
-                }
-            } catch (SQLException e) {
-                connection.rollback();
-                log.error("Error executing SQL query", e);
-                throw new RuntimeException("Failed to add car to the database", e);
-            }
-        } catch (SQLException e) {
-            log.error("Transaction error", e);
-            throw new RuntimeException("Failed to handle transaction", e);
+            return jdbcTemplate.queryForObject(
+                    ADD_CAR_SQL,
+                    new Object[]{
+                            car.getBrand(),
+                            car.getModel(),
+                            car.getYear(),
+                            car.getPrice(),
+                            car.getState().getValue()
+                    },
+                    Long.class
+            );
+        } catch (Exception e) {
+            log.error(ADD_ERROR_MESSAGE_EXCEPTION, e);
+            throw new RuntimeException(ADD_ERROR_MESSAGE_EXCEPTION, e);
         }
-        return null;
     }
 
     /**
@@ -87,28 +104,14 @@ public class JdbcCarRepository implements CarRepository {
      * @throws RuntimeException if the car cannot be deleted due to a SQL or transaction error
      */
     @Override
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public Car delete(Long id) {
-        String sql = "DELETE FROM entity_schema.car WHERE car_id = ? RETURNING *";
         try {
-            connection.setAutoCommit(false);
-            try (PreparedStatement statement = connection.prepareStatement(sql)) {
-                statement.setLong(1, id);
-                ResultSet resultSet = statement.executeQuery();
-                if (resultSet.next()) {
-                    Car car = mapRowToCar(resultSet);
-                    connection.commit();
-                    return car;
-                }
-            } catch (SQLException e) {
-                connection.rollback();
-                log.error("Error executing SQL query", e);
-                throw new RuntimeException("Failed to delete car from the database", e);
-            }
-        } catch (SQLException e) {
-            log.error("Transaction error", e);
-            throw new RuntimeException("Failed to handle transaction", e);
+            return jdbcTemplate.queryForObject(DELETE_CAR_SQL, new Object[]{id}, CAR_ROW_MAPPER);
+        } catch (Exception e) {
+            log.error(DELETE_ERROR_MESSAGE_EXCEPTION, e);
+            throw new RuntimeException(DELETE_ERROR_MESSAGE_EXCEPTION, e);
         }
-        return null;
     }
 
     /**
@@ -118,19 +121,14 @@ public class JdbcCarRepository implements CarRepository {
      * @throws RuntimeException if the cars cannot be retrieved due to a SQL error
      */
     @Override
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
     public List<Car> findAll() {
-        List<Car> cars = new ArrayList<>();
-        String sql = "SELECT * FROM entity_schema.car";
-        try (Statement statement = connection.createStatement()) {
-            ResultSet resultSet = statement.executeQuery(sql);
-            while (resultSet.next()) {
-                cars.add(mapRowToCar(resultSet));
-            }
-        } catch (SQLException e) {
-            log.error("Error executing SQL query", e);
+        try {
+            return jdbcTemplate.query(FIND_ALL_CARS_SQL, CAR_ROW_MAPPER);
+        } catch (Exception e) {
+            log.error("Failed to retrieve cars from the database", e);
             throw new RuntimeException("Failed to retrieve cars from the database", e);
         }
-        return cars;
     }
 
     /**
@@ -142,28 +140,21 @@ public class JdbcCarRepository implements CarRepository {
      * @throws RuntimeException if the car cannot be updated due to a SQL or transaction error
      */
     @Override
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public boolean editCar(Long id, Car updatedCar) {
-        String sql = "UPDATE entity_schema.car SET brand = ?, model = ?, year = ?, price = ?, state = ? WHERE car_id = ?";
         try {
-            connection.setAutoCommit(false); // Начало транзакции
-            try (PreparedStatement statement = connection.prepareStatement(sql)) {
-                statement.setString(1, updatedCar.getBrand());
-                statement.setString(2, updatedCar.getModel());
-                statement.setInt(3, updatedCar.getYear());
-                statement.setDouble(4, updatedCar.getPrice());
-                statement.setString(5, updatedCar.getState().getValue());
-                statement.setLong(6, id);
-                boolean result = statement.executeUpdate() > 0;
-                connection.commit();
-                return result;
-            } catch (SQLException e) {
-                connection.rollback();
-                log.error("Error executing SQL query", e);
-                throw new RuntimeException("Failed to edit car in the database", e);
-            }
-        } catch (SQLException e) {
-            log.error("Transaction error", e);
-            throw new RuntimeException("Failed to handle transaction", e);
+            int rowsAffected = jdbcTemplate.update(UPDATE_CAR_SQL,
+                    updatedCar.getBrand(),
+                    updatedCar.getModel(),
+                    updatedCar.getYear(),
+                    updatedCar.getPrice(),
+                    updatedCar.getState().getValue(),
+                    id
+            );
+            return rowsAffected > 0;
+        } catch (Exception e) {
+            log.error("Failed to edit car in the database", e);
+            throw new RuntimeException("Failed to edit car in the database", e);
         }
     }
 
@@ -175,20 +166,14 @@ public class JdbcCarRepository implements CarRepository {
      * @throws RuntimeException if the cars cannot be retrieved due to a SQL error
      */
     @Override
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
     public List<Car> findByBrand(String brand) {
-        List<Car> cars = new ArrayList<>();
-        String sql = "SELECT * FROM entity_schema.car WHERE brand = ?";
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, brand);
-            ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()) {
-                cars.add(mapRowToCar(resultSet));
-            }
-        } catch (SQLException e) {
-            log.error("Error executing SQL query", e);
+        try {
+            return jdbcTemplate.query(FIND_BY_BRAND_SQL, new Object[]{brand}, CAR_ROW_MAPPER);
+        } catch (Exception e) {
+            log.error("Failed to retrieve cars by brand from the database", e);
             throw new RuntimeException("Failed to retrieve cars by brand from the database", e);
         }
-        return cars;
     }
 
     /**
@@ -199,20 +184,14 @@ public class JdbcCarRepository implements CarRepository {
      * @throws RuntimeException if the cars cannot be retrieved due to a SQL error
      */
     @Override
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
     public List<Car> findByModel(String model) {
-        List<Car> cars = new ArrayList<>();
-        String sql = "SELECT * FROM entity_schema.car WHERE model = ?";
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, model);
-            ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()) {
-                cars.add(mapRowToCar(resultSet));
-            }
-        } catch (SQLException e) {
-            log.error("Error executing SQL query", e);
+        try {
+            return jdbcTemplate.query(FIND_BY_MODEL_SQL, new Object[]{model}, CAR_ROW_MAPPER);
+        } catch (Exception e) {
+            log.error("Failed to retrieve cars by model from the database", e);
             throw new RuntimeException("Failed to retrieve cars by model from the database", e);
         }
-        return cars;
     }
 
     /**
@@ -223,20 +202,14 @@ public class JdbcCarRepository implements CarRepository {
      * @throws RuntimeException if the cars cannot be retrieved due to a SQL error
      */
     @Override
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
     public List<Car> findByYear(int year) {
-        List<Car> cars = new ArrayList<>();
-        String sql = "SELECT * FROM entity_schema.car WHERE year = ?";
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, year);
-            ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()) {
-                cars.add(mapRowToCar(resultSet));
-            }
-        } catch (SQLException e) {
-            log.error("Error executing SQL query", e);
+        try {
+            return jdbcTemplate.query(FIND_BY_YEAR_SQL, new Object[]{year}, CAR_ROW_MAPPER);
+        } catch (Exception e) {
+            log.error("Failed to retrieve cars by year from the database", e);
             throw new RuntimeException("Failed to retrieve cars by year from the database", e);
         }
-        return cars;
     }
 
     /**
@@ -248,38 +221,13 @@ public class JdbcCarRepository implements CarRepository {
      * @throws RuntimeException if the cars cannot be retrieved due to a SQL error
      */
     @Override
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
     public List<Car> findByPriceRange(double minPrice, double maxPrice) {
-        List<Car> cars = new ArrayList<>();
-        String sql = "SELECT * FROM entity_schema.car WHERE price BETWEEN ? AND ?";
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setDouble(1, minPrice);
-            statement.setDouble(2, maxPrice);
-            ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()) {
-                cars.add(mapRowToCar(resultSet));
-            }
-        } catch (SQLException e) {
-            log.error("Error executing SQL query", e);
+        try {
+            return jdbcTemplate.query(FIND_BY_PRICE_RANGE_SQL, new Object[]{minPrice, maxPrice}, CAR_ROW_MAPPER);
+        } catch (Exception e) {
+            log.error("Failed to retrieve cars by price range from the database", e);
             throw new RuntimeException("Failed to retrieve cars by price range from the database", e);
         }
-        return cars;
-    }
-
-    /**
-     * Maps a {@link ResultSet} row to a {@link Car} entity.
-     *
-     * @param resultSet the {@link ResultSet} to map
-     * @return a {@link Car} entity representing the current row in the {@link ResultSet}
-     * @throws SQLException if an error occurs while accessing the {@link ResultSet}
-     */
-    private Car mapRowToCar(ResultSet resultSet) throws SQLException {
-        return new Car(
-                resultSet.getLong("car_id"),
-                resultSet.getString("brand"),
-                resultSet.getString("model"),
-                resultSet.getInt("year"),
-                resultSet.getDouble("price"),
-                CarState.valueOf(resultSet.getString("state").toUpperCase())
-        );
     }
 }

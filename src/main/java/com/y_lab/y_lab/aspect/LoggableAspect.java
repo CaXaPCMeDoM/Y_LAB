@@ -1,6 +1,5 @@
 package com.y_lab.y_lab.aspect;
 
-import com.y_lab.y_lab.config.ServiceContainer;
 import com.y_lab.y_lab.entity.enums.ActionType;
 import com.y_lab.y_lab.security.UserContext;
 import com.y_lab.y_lab.service.logger.AuditService;
@@ -9,16 +8,18 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
 
 
 @Aspect
+@Component
 public class LoggableAspect {
     private final AuditService auditService;
 
-    public LoggableAspect() {
-        this.auditService = ServiceContainer.getAuditService();
+    public LoggableAspect(AuditService auditService) {
+        this.auditService = auditService;
     }
 
     @Pointcut("@annotation(com.y_lab.y_lab.annotation.Loggable)")

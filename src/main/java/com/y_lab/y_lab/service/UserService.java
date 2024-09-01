@@ -14,23 +14,17 @@ import com.y_lab.y_lab.service.logger.AuditService;
 import com.y_lab.y_lab.service.mapping.MappingUserAndUserInfo;
 import com.y_lab.y_lab.service.user.decorator.filter.UserFilter;
 import com.y_lab.y_lab.service.user.decorator.sort.UserSorter;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
+@Service
 public class UserService {
     private final UserRepository userRepository;
-    private final AuditService auditService;
     private final ChainOfRole chainOfRole;
     private final UserProfileService userProfileService;
-
-    public UserService(UserRepository userRepository, AuditService auditService) {
-        this.userRepository = userRepository;
-        this.auditService = auditService;
-        this.userProfileService = new UserProfileService(userRepository);
-        this.chainOfRole = new ChainOfRole();
-    }
 
     @Loggable(action_type = ActionType.REGISTRATION)
     public void registerUser(User user) throws AuthorizationFailedForTheRole, UserIsAlreadyRegistered {

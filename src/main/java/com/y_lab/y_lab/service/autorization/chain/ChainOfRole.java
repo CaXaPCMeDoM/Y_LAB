@@ -5,19 +5,19 @@ import com.y_lab.y_lab.service.autorization.role.AdminRole;
 import com.y_lab.y_lab.service.autorization.role.ManagerRole;
 import com.y_lab.y_lab.service.autorization.role.UserRole;
 import com.y_lab.y_lab.service.autorization.handler.RoleHandler;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ChainOfRole {
     private final RoleHandler adminRole;
-    private final RoleHandler managerRole;
-    private final RoleHandler userRole;
 
-    public ChainOfRole() {
-        adminRole = new AdminRole();
-        managerRole = new ManagerRole();
-        userRole = new UserRole();
+    public ChainOfRole(AdminRole adminRole,
+                       ManagerRole managerRole,
+                       UserRole userRole) {
         adminRole.setNextHandler(
                 managerRole.setNextHandler(
                         userRole));
+        this.adminRole = adminRole;
     }
 
     public boolean assemblingTheChain(Role role) {

@@ -1,5 +1,9 @@
 package com.y_lab.y_lab;
 
+import com.y_lab.y_lab.repository.audit.JdbcAuditRepository;
+import com.y_lab.y_lab.repository.car.JdbcCarRepository;
+import com.y_lab.y_lab.repository.order.JdbcOrderRepository;
+import com.y_lab.y_lab.repository.user.JdbcUserRepository;
 import liquibase.Contexts;
 import liquibase.LabelExpression;
 import liquibase.Liquibase;
@@ -8,7 +12,10 @@ import liquibase.database.DatabaseFactory;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.LiquibaseException;
 import liquibase.resource.DirectoryResourceAccessor;
-import org.junit.jupiter.api.BeforeAll;
+import lombok.Getter;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -22,38 +29,36 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 @Testcontainers
+@SpringJUnitConfig(classes = {
+        JdbcAuditRepository.class,
+        JdbcCarRepository.class,
+        JdbcOrderRepository.class,
+        JdbcUserRepository.class
+})
 public class IntegrationEnvironment {
     private static final String SCHEMA_CHANGE_LOG = "service";
+    @Getter
     @Container
-    protected static PostgreSQLContainer<?> postgresContainer;
+    protected static PostgreSQLContainer<?> postgresContainer = new PostgreSQLContainer<>("postgres:16")
+            .withDatabaseName("db")
+            .withUsername("caxap")
+            .withPassword("1234");
 
     protected static Connection connection;
 
-    static {
-        postgresContainer = new PostgreSQLContainer<>("postgres:16")
-                .withDatabaseName("db")
-                .withUsername("caxap")
-                .withPassword("1234");
-        postgresContainer.start();
-
-        runMigration();
-    }
-
-    @BeforeAll
-    static void setUp(){
-        postgresContainer = new PostgreSQLContainer<>("postgres:16")
-                .withDatabaseName("db")
-                .withUsername("caxap")
-                .withPassword("1234");
-        postgresContainer.start();
-
+    @DynamicPropertySource
+    static void registerDynamicProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", postgresContainer::getJdbcUrl);
+        registry.add("spring.datasource.username", postgresContainer::getUsername);
+        registry.add("spring.datasource.password", postgresContainer::getPassword);
         runMigration();
     }
 
     private static void runMigration() {
-        String url = IntegrationEnvironment.postgresContainer.getJdbcUrl();
-        String password = IntegrationEnvironment.postgresContainer.getPassword();
-        String username = IntegrationEnvironment.postgresContainer.getUsername();
+        postgresContainer.start();
+        String url = postgresContainer.getJdbcUrl();
+        String password = postgresContainer.getPassword();
+        String username = postgresContainer.getUsername();
 
         try {
             connection = DriverManager.getConnection(url, username, password);

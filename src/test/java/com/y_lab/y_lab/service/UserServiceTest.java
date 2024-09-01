@@ -32,7 +32,7 @@ class UserServiceTest {
         auditService = mock(AuditService.class);
         chainOfRole = mock(ChainOfRole.class);
         userProfileService = mock(UserProfileService.class);
-        userService = new UserService(userRepository, auditService, chainOfRole, userProfileService);
+        userService = new UserService(userRepository, chainOfRole, userProfileService);
     }
 
     @Test

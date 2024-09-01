@@ -3,14 +3,13 @@ package com.y_lab.y_lab.mapper;
 import com.y_lab.y_lab.entity.User;
 import com.y_lab.y_lab.entity.dto.response.UserResponseDto;
 import org.mapstruct.Mapper;
+import org.mapstruct.MappingConstants;
 import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 
-@Mapper
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface UserMapper {
-    UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
-
     UserResponseDto toUserResponseDto(User user);
 
     List<UserResponseDto> toUserResponseList(List<User> users);
