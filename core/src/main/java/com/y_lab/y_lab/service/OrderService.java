@@ -18,7 +18,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OrderService {
     private final OrderRepository orderRepository;
-    private final AuditService auditService;
 
     @Auditable(action_type = ActionType.CREATE_ORDER)
     @Loggable

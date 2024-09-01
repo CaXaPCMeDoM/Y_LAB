@@ -1,6 +1,5 @@
 package com.y_lab.y_lab.web.car;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.y_lab.y_lab.entity.Car;
 import com.y_lab.y_lab.entity.dto.response.CarResponseDto;
 import com.y_lab.y_lab.exception.CarNotFound;

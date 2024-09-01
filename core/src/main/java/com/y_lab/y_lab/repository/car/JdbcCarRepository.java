@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
