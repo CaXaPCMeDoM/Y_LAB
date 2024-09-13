@@ -1,0 +1,24 @@
+spring:
+  liquibase:
+    enabled: false
+  application:
+    name: Y_LAB
+  datasource:
+    name: db
+    password: 1234
+    username: caxap
+    url: jdbc:postgresql://localhost:5434/db
+server:
+  port: 8080
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui
+
+app:
+  type:
+    database:
+      acess_type: jdbc
+  audit:
+    export:
+      filename: output.txt
